@@ -61,6 +61,11 @@ glm::vec3 bezier(float t, glm::vec3 p0, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3
 	return (u * u * u * p0) + (3.0f * u * u * t * p1) + (3.0f * u * t * t * p2) + (t * t * t * p3);
 }
 
+// Función para actualizar el lienzo cuando se cambia el tamaño de la ventana
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+	glViewport(0, 0, width, height);
+}
+
 int main()
 {
 	// Inicializar GLFW y configurar OpenGL 3.3 en perfil Core
@@ -82,6 +87,9 @@ int main()
 	// Cargar GLAD para mapear las funciones de la GPU
 	gladLoadGL();
 	glViewport(0, 0, width, height);
+
+	// Regitro del callback
+	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	// Shaders para el dado texturizado
 	Shader shaderProgram("default.vert", "default.frag");
@@ -154,6 +162,12 @@ int main()
 		// Limpiar pantalla (Fondo gris oscuro) y el buffer de profundidad
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		// Retoma las variables de la resolucion de la ventana
+		int currentWidth, currentHeight;
+		glfwGetWindowSize(window, &currentWidth, &currentHeight);
+		camera.width = currentWidth;
+		camera.height = currentHeight;
 
 		// Controlar el tiempo para que la rotación vaya a 60 FPS estables en cualquier PC
 		double crntTime = glfwGetTime();
